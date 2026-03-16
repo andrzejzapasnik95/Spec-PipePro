@@ -1786,6 +1786,83 @@ html.light .itb-kolano_ul { color: #15803d !important; }
 </style>
 </head>
 <body>
+
+<!-- ══ EKRAN LOGOWANIA ══════════════════════════════════════════════════════ -->
+<div id="login-screen" style="position:fixed;inset:0;z-index:99999;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:0">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px 40px;width:100%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,.3);text-align:center">
+    <!-- Logo -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:24px">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent-dim),rgba(0,212,170,.3));border:1px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:22px">🔩</div>
+      <div style="text-align:left">
+        <div style="font-size:18px;font-weight:800;letter-spacing:.08em;color:var(--text)">PIPE<span style="color:var(--accent)">VAL</span> PRO</div>
+        <div style="font-size:10px;color:var(--text3);font-family:monospace">Dostęp chroniony hasłem</div>
+      </div>
+    </div>
+    <!-- Pole hasła -->
+    <div style="margin-bottom:12px;text-align:left">
+      <label style="font-size:10px;font-weight:700;color:var(--text2);letter-spacing:.06em;display:block;margin-bottom:6px">HASŁO DOSTĘPU</label>
+      <input id="login-input" type="password" placeholder="Wpisz hasło..."
+        style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;letter-spacing:.1em;outline:none;transition:border-color .15s"
+        onkeydown="if(event.key==='Enter')_loginCheck()"
+        oninput="document.getElementById('login-err').style.display='none';this.style.borderColor='var(--border)'">
+    </div>
+    <div id="login-err" style="display:none;color:var(--error);font-size:11px;margin-bottom:10px;padding:7px 10px;background:rgba(244,63,94,.1);border-radius:6px;border:1px solid rgba(244,63,94,.3)">
+      ❌ Nieprawidłowe hasło. Spróbuj ponownie.
+    </div>
+    <button onclick="_loginCheck()"
+      style="width:100%;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#000;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.05em;transition:opacity .15s"
+      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      WEJDŹ →
+    </button>
+    <div style="margin-top:16px;font-size:10px;color:var(--text3)">
+      Skontaktuj się z administratorem aby uzyskać hasło
+    </div>
+  </div>
+</div>
+
+<script>
+// ══ KONFIGURACJA HASŁA — zmień tutaj ══
+const _APP_PASSWORD = 'PipeValPro130199';  // ← TWOJE HASŁO
+// ═════════════════════════════════════
+
+(function() {
+  // Sprawdź czy już zalogowany (sesja)
+  if (sessionStorage.getItem('_pv_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    return;
+  }
+  // Ukryj aplikację do czasu logowania
+  document.addEventListener('DOMContentLoaded', () => {
+    const app = document.getElementById('login-screen');
+    if (app) app.style.display = 'flex';
+  });
+})();
+
+function _loginCheck() {
+  const val = document.getElementById('login-input').value;
+  if (val === _APP_PASSWORD) {
+    sessionStorage.setItem('_pv_auth', '1');
+    const screen = document.getElementById('login-screen');
+    screen.style.transition = 'opacity .3s';
+    screen.style.opacity = '0';
+    setTimeout(() => screen.remove(), 300);
+  } else {
+    const inp = document.getElementById('login-input');
+    const err = document.getElementById('login-err');
+    inp.style.borderColor = 'var(--error)';
+    err.style.display = 'block';
+    inp.value = '';
+    inp.focus();
+    // Potrząśnij polem
+    inp.style.animation = 'none';
+    inp.style.transform = 'translateX(6px)';
+    setTimeout(() => inp.style.transform = 'translateX(-6px)', 80);
+    setTimeout(() => inp.style.transform = 'translateX(4px)', 160);
+    setTimeout(() => inp.style.transform = 'translateX(0)', 240);
+  }
+}
+</script>
+
 <header>
   <div class="logo-wrap">
     <div class="logo-icon">🔩</div>
@@ -20174,6 +20251,18 @@ function libShowSection(sec){
   try {
     _libSection=sec||'pipes';
     _libSortCol=null; _libSortDir=1; _libOpenRow=null;
+    // Baner gdy brak aktywnego projektu
+    const noProjBanner = !activeProjectId
+      ? `<div style="margin-bottom:12px;padding:10px 14px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);border-radius:8px;display:flex;align-items:center;gap:10px">
+          <span style="font-size:18px">⚠️</span>
+          <div>
+            <div style="font-size:11px;font-weight:700;color:var(--warn)">Brak aktywnego projektu</div>
+            <div style="font-size:10px;color:var(--text2);margin-top:1px">Przyciski ➕ Dodaj będą widoczne po wybraniu lub utworzeniu projektu.</div>
+          </div>
+          <button onclick="closeLibrary();openNewProjectModal()" style="margin-left:auto;padding:5px 12px;border-radius:6px;background:var(--accent);color:#000;border:none;cursor:pointer;font-size:11px;font-weight:700;white-space:nowrap">+ Nowy projekt</button>
+        </div>`
+      : '';
+    const _noProjBannerHTML = noProjBanner;
     // ULP-LIB #7: zapamiętaj ostatnią sekcję i historię odwiedzin
     try {
       localStorage.setItem('pipeval_lib_last_section', _libSection);
@@ -20197,6 +20286,11 @@ function libShowSection(sec){
     const cnt=document.getElementById('lib-results-count');
     if(cnt) cnt.style.display='none';
     libRender();
+    // Wstaw baner na górze po renderowaniu
+    if(_noProjBannerHTML) {
+      const el = document.getElementById('lib-content');
+      if(el) el.innerHTML = _noProjBannerHTML + el.innerHTML;
+    }
   } catch(e) { 
     console.error('libShowSection error:', e);
     const el=document.getElementById('lib-content');
