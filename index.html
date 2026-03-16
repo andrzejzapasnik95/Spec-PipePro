@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PipeVal Pro v4.5 — Offlin</title>
+<title>PipeVal Pro v4.5 — Offline</title>
 <style>
 /* Offline mode – system fonts used instead of Google Fonts */
 
@@ -2159,22 +2159,21 @@ html.light .itb-kolano_ul { color: #15803d !important; }
 
 <!-- MODAL: New / Edit Project -->
 <div class="modal-overlay" id="modal-project" style="display:none" onclick="if(event.target===this)closeModal('modal-project')">
-  <div class="modal">
+  <div class="modal" style="max-width:540px;width:100%">
     <div class="modal-title" id="modal-proj-title">📁 Nowy projekt</div>
     <div class="row2">
       <div><label>Nazwa projektu *</label><input id="mp-name" placeholder="np. Rafineria Gdańsk – ISO-001"></div>
       <div><label>Numer projektu / ISO</label><input id="mp-num" placeholder="np. PRJ-2024-015"></div>
     </div>
-    <div class="row2">
-      <div>
-        <label>Norma projektu</label>
-        <select id="mp-norm" style="border-left:3px solid var(--accent);font-weight:700">
-          <option value="EN">PN-EN (metryczny — DN, PN)</option>
-          <option value="ASME">ASME B16.5 (imperialny — NPS, Class)</option>
-        </select>
-      </div>
-      <div><label>Klient / Obiekt</label><input id="mp-client" placeholder="np. PKN Orlen S.A."></div>
+    <div style="margin-bottom:10px">
+      <label>Norma projektu</label>
+      <select id="mp-norm" style="border-left:3px solid var(--accent);font-weight:700;width:100%">
+        <option value="EN">PN-EN (metryczny — DN, PN)</option>
+        <option value="ASME">ASME B16.5 (imperialny — NPS, Class)</option>
+      </select>
     </div>
+    <div class="row2">
+      <div><label>Klient / Obiekt</label><input id="mp-client" placeholder="np. PKN Orlen S.A."></div>
       <div><label>Instalacja / Węzeł</label><input id="mp-install" placeholder="np. Węzeł destylacji, Sekcja 100"></div>
     </div>
     <div class="row2">
